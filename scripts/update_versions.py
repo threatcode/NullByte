@@ -1,5 +1,7 @@
 import json
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 # Load the data.json file
 with open("core/data.json", "r") as data_file:
