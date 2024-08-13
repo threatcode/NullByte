@@ -16,12 +16,16 @@ def get_latest_version(repo_url):
 # Update the versions
 updated = False
 for tool_name, tool_data in data.items():
-    repo_url = tool_data["url"].replace(".git", "")
-    latest_version = get_latest_version(repo_url)
-    if latest_version and tool_data.get("version") != latest_version:
-        print(f"Updating {tool_name} from {tool_data.get('version')} to {latest_version}")
-        tool_data["version"] = latest_version
-        updated = True
+    repo_url = tool_data.get("url")
+    if repo_url:  # Check if the URL is not None
+        repo_url = repo_url.replace(".git", "")
+        latest_version = get_latest_version(repo_url)
+        if latest_version and tool_data.get("version") != latest_version:
+            print(f"Updating {tool_name} from {tool_data.get('version')} to {latest_version}")
+            tool_data["version"] = latest_version
+            updated = True
+    else:
+        print(f"Skipping {tool_name} due to missing URL")
 
 # Save the updated data.json file if changes were made
 if updated:
