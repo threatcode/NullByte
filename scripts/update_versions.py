@@ -1,7 +1,7 @@
 import json
 import os
 import requests
-import time  # Import the time module
+import time
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -12,6 +12,7 @@ with open("core/data.json", "r") as data_file:
 # Function to get the latest version from the GitHub API
 def get_latest_version(repo_url):
     api_url = repo_url.replace("github.com", "api.github.com/repos") + "/releases/latest"
+    print(f"Requesting URL: {api_url}")  # Debug print
     token = os.getenv('GITHUB_TOKEN')
     headers = {'Authorization': f'token {token}'} if token else {}
     session = requests.Session()
@@ -22,13 +23,18 @@ def get_latest_version(repo_url):
 
     try:
         response = session.get(api_url, headers=headers)
+        print(f"Response status code: {response.status_code}")  # Debug print
         if response.status_code == 403:
             rate_limit_reset = int(response.headers.get('X-RateLimit-Reset', 0))
             if rate_limit_reset > 0:
                 sleep_time = rate_limit_reset - time.time() + 1
                 print(f"Rate limit exceeded. Sleeping for {sleep_time} seconds.")
                 time.sleep(max(sleep_time, 0))
+                return get_latest_version(repo_url)  # Retry after sleeping
         response.raise_for_status()
+        if response.status_code == 404:
+            print(f"Repository {repo_url} does not have a release or is not found.")
+            return None
         return response.json().get("tag_name")
     except requests.exceptions.RequestException as e:
         print(f"Error fetching version for {repo_url}: {e}")
