@@ -24,6 +24,8 @@ jobs:
 
     - name: Update tool versions
       run: python scripts/update_versions.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Commit and push changes
       run: |
