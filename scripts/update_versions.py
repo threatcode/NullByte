@@ -7,9 +7,13 @@ from requests.packages.urllib3.util.retry import Retry
 with open("core/data.json", "r") as data_file:
     data = json.load(data_file)
 
-# Function to get the latest version from the GitHub API
+def sanitize_url(url):
+    return url.strip().rstrip(':')  # Remove any trailing colons
+
 def get_latest_version(repo_url):
+    repo_url = sanitize_url(repo_url)
     api_url = repo_url.replace("github.com", "api.github.com/repos") + "/releases/latest"
+    print(f"Requesting URL: {api_url}")  # Debug print statement
     session = requests.Session()
     retry = Retry(total=5, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
     adapter = HTTPAdapter(max_retries=retry)
