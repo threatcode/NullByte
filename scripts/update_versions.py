@@ -25,7 +25,7 @@ for tool_name, tool_data in data.items():
 
 # Save the updated data.json file if changes were made
 if updated:
-    with open("NullByte/core/data.json", "w") as data_file:
+    with open("core/data.json", "w") as data_file:
         json.dump(data, data_file, indent=2)
 else:
     print("No updates were necessary.")
