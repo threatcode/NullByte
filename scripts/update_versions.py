@@ -8,10 +8,19 @@ with open("core/data.json", "r") as data_file:
 # Function to get the latest version from the GitHub API
 def get_latest_version(repo_url):
     api_url = repo_url.replace("github.com", "api.github.com/repos") + "/releases/latest"
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        return response.json()["tag_name"]
-    return None
+    session = requests.Session()
+    retry = Retry(total=5, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    try:
+        response = session.get(api_url)
+        response.raise_for_status()
+        return response.json().get("tag_name")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching version for {repo_url}: {e}")
+        return None
 
 # Update the versions
 updated = False
