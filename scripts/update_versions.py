@@ -1,5 +1,6 @@
 import json
 import requests
+import time
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -11,17 +12,22 @@ def sanitize_url(url):
     return url.strip().rstrip(':')  # Remove any trailing colons
 
 def get_latest_version(repo_url):
-    repo_url = sanitize_url(repo_url)
     api_url = repo_url.replace("github.com", "api.github.com/repos") + "/releases/latest"
-    print(f"Requesting URL: {api_url}")  # Debug print statement
+    headers = {'Authorization': f'token {YOUR_GITHUB_TOKEN}'}
     session = requests.Session()
-    retry = Retry(total=5, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+    retry = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
     try:
-        response = session.get(api_url)
+        response = session.get(api_url, headers=headers)
+        if response.status_code == 403:
+            rate_limit_reset = int(response.headers.get('X-RateLimit-Reset', 0))
+            if rate_limit_reset > 0:
+                sleep_time = rate_limit_reset - time.time() + 1
+                print(f"Rate limit exceeded. Sleeping for {sleep_time} seconds.")
+                time.sleep(max(sleep_time, 0))
         response.raise_for_status()
         return response.json().get("tag_name")
     except requests.exceptions.RequestException as e:
