@@ -116,7 +116,7 @@ class main:
             if os.path.exists(system.home+"/NullByte"):
               pass
             else:
-              os.system(system.sudo+" git clone https://github.com/rajkumardusad/NullByte.git "+system.home+"/NullByte")
+              os.system(system.sudo+" git clone https://github.com/threatcode/NullByte.git "+system.home+"/NullByte")
             if os.path.exists(system.home+"/NullByte/install.aex"):
               os.system("cd "+system.home+"/NullByte && "+system.sudo+" sh install.aex")
               if os.path.exists(system.bin+"/NullByte") and os.path.exists(system.conf_dir+"/NullByte"):
@@ -135,7 +135,7 @@ class main:
             if os.path.exists(system.home+"/NullByte"):
               pass
             else:
-              os.system("git clone https://github.com/rajkumardusad/NullByte.git "+system.home+"/NullByte")
+              os.system("git clone https://github.com/threatcode/NullByte.git "+system.home+"/NullByte")
             if os.path.exists(system.home+"/NullByte/install.aex"):
               os.system("cd "+system.home+"/NullByte && sh install.aex")
               if os.path.exists(system.bin+"/NullByte") and os.path.exists(system.conf_dir+"/NullByte"):
