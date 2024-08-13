@@ -11,6 +11,8 @@ with open("core/data.json", "r") as data_file:
 
 # Function to get the latest version from the GitHub API
 def get_latest_version(repo_url):
+    # Strip .git if present in the URL
+    repo_url = repo_url.rstrip('.git')
     api_url = repo_url.replace("github.com", "api.github.com/repos") + "/releases/latest"
     print(f"Requesting URL: {api_url}")  # Debug print
     token = os.getenv('GITHUB_TOKEN')
@@ -39,6 +41,11 @@ def get_latest_version(repo_url):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching version for {repo_url}: {e}")
         return None
+
+# Example usage
+for repo_name, repo_info in data.items():
+    version = get_latest_version(repo_info['url'])
+    print(f"Latest version for {repo_name}: {version}")
 
 # Update the versions
 updated = False
