@@ -2,7 +2,7 @@ import json
 import requests
 
 # Load the data.json file
-with open("NullByte/core/data.json", "r") as data_file:
+with open("core/data.json", "r") as data_file:
     data = json.load(data_file)
 
 # Function to get the latest version from the GitHub API
